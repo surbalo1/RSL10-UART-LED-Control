@@ -1,0 +1,47 @@
+# RSL10 Embedded C Project - .gitignore
+
+# Compiled Object Files
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# Build Directories
+Debug/
+Release/
+Build/
+output/
+
+# Eclipse / ON Semiconductor IDE
+.metadata/
+.settings/
+.cproject
+.project
+*.launch
+
+# J-Link
+JLink*.txt
+*.jlink
+
+# Logs and Temp Files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor Files
+.vscode/
+*.sublime-*
+*~
+
+# Archives
+*.zip
+*.tar.gz
