@@ -1,68 +1,76 @@
-# RSL10 UART LED Control
+<div align="center">
 
-this project is a simple uart-based led control for the on semiconductor rsl10. it allows turning an led on or off from a serial terminal and shows confirmation messages in real time.
+# 💡 RSL10 UART LED Control
 
-## 📋 description
+[![C](https://img.shields.io/badge/C-A8B9CC?style=for-the-badge&logo=c&logoColor=black)](https://en.wikipedia.org/wiki/C_(programming_language))
+[![RSL10](https://img.shields.io/badge/ON_Semi_RSL10-00A651?style=for-the-badge&logo=onsemi&logoColor=white)](https://www.onsemi.com/products/wireless-connectivity/bluetooth-low-energy/rsl10)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-the firmware demonstrates basic uart communication on the rsl10 ble soc. it reads commands from a terminal, controls the onboard led, and sends messages back confirming the action.
+**Simple UART-based LED control for RSL10 with bidirectional serial communication.**
 
-### features
+*DMA transfers • Command confirmation • No external hardware required*
 
-* uart bidirectional communication at 115200 baud
-* led control with simple commands (`1` = on, `0` = off)
-* dma-based transfers for fast communication
-* polling-based reception with simple software debouncing
-* command confirmation in terminal
-* clean code with english comments
-* only uses onboard led, no extra hardware needed
+</div>
 
-## 🔧 hardware requirements
+---
 
-* **board:** rsl10-002gevb
-* **microcontroller:** rsl10 ble 5.2, ultra-low power
-* **debugger:** j-link (included)
-* **cable:** usb type-a to micro-usb
+## 📋 Overview
 
-### pin configuration
+A minimal firmware demonstrating bidirectional UART communication on the ON Semiconductor RSL10 BLE SoC. Control the onboard LED via simple serial commands with real-time confirmation messages.
 
-| function | pin  | description          |
-| -------- | ---- | -------------------- |
-| uart tx  | dio5 | send data to pc      |
-| uart rx  | dio4 | receive data from pc |
-| led      | dio6 | onboard led control  |
+---
 
-## 💻 software requirements
+## ✨ Features
 
-* on semiconductor ide (eclipse-based)
-* rsl10 sdk v3.6 or higher
-* serial terminal (putty, tera term, screen, arduino serial monitor)
-* segger j-link software
+| Feature | Description |
+|---------|-------------|
+| **📡 UART Communication** | Bidirectional @ 115200 baud |
+| **💡 LED Control** | Simple commands (`1` = on, `0` = off) |
+| **⚡ DMA Transfers** | Fast, efficient data handling |
+| **✅ Confirmation** | Real-time command feedback |
+| **🔧 No External HW** | Uses onboard LED only |
 
-## 🚀 getting started
+---
 
-### installation
+## 🛠️ Hardware
 
-1. clone repo:
+| Component | Description |
+|-----------|-------------|
+| **Board** | RSL10-002GEVB |
+| **MCU** | RSL10 BLE 5.2 Ultra-Low Power |
+| **Debugger** | J-Link (included) |
+| **Cable** | USB Type-A to Micro-USB |
 
-```
+### Pin Configuration
+
+| Function | Pin | Description |
+|:--------:|:---:|-------------|
+| **UART TX** | DIO5 | Send data to PC |
+| **UART RX** | DIO4 | Receive data from PC |
+| **LED** | DIO6 | Onboard LED control |
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone repository
 git clone https://github.com/surbalo1/RSL10-UART-LED-Control.git
 cd RSL10-UART-LED-Control
+
+# Import in ON Semiconductor IDE
+# Build: Ctrl+B
+# Flash: F11
 ```
 
-2. import in ide: file → import → existing projects → select folder → finish
+### Usage
 
-3. build project: project → build all (ctrl+b)
+1. Open serial terminal @ **115200 baud, 8N1**
+2. Send commands:
+   - `1` → LED ON
+   - `0` → LED OFF
 
-4. flash to rsl10: run → debug (f11)
-
-### usage
-
-1. open serial terminal: baud 115200, 8n1, no flow control
-2. send commands:
-
-   * `1` → led on
-   * `0` → led off
-3. expected output:
+### Expected Output
 
 ```
 === RSL10 UART LED Control ===
@@ -74,100 +82,18 @@ ready to receive commands...
 
 led on
 led off
-led on
 ```
 
-## 📁 project structure
+---
 
-```
-RSL10-UART-LED-Control/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── docs/terminal-output.png
-├── include/app.h
-├── include/uart.h
-├── src/app.c
-└── src/uart.c
-```
+## 📄 License
 
-## 🎓 how it works
+MIT License
 
-the system uses dma uart for fast transfers:
+---
 
-* tx (dio5) → sends confirmation in linear dma mode
-* rx (dio4) → receives commands in circular dma mode
-* baud → 115200
+<div align="center">
 
-simple software debouncing: only process command if it’s different from last one.
-fifo empty → reset last_char.
+[![GitHub](https://img.shields.io/badge/Star_on_GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/surbalo1/RSL10-UART-LED-Control)
 
-main loop pseudocode:
-
-```
-while(1) {
-  refresh watchdog
-  if(rx fifo has data) {
-    read char
-    if char != last_char {
-      if char == '1' → led on + send message
-      if char == '0' → led off + send message
-      last_char = char
-    }
-  } else last_char = 0
-}
-```
-
-## 📊 code stats
-
-* lines: 350+
-* source files: 2 (app.c, uart.c)
-* headers: 2 (app.h, uart.h)
-* functions: 3 main (initialize, main, uart_initialize)
-* comments: full english documentation
-
-## 🐛 troubleshooting
-
-* repeated messages → solved with last_char check
-* no response → check uart pins dio4/dio5
-* garbage chars → check baud 115200
-* led not switching → check dio6 output
-
-## 🛠️ technical details
-
-* system clock: 8mhz (48mhz xtal /6)
-* uart clock derived from system clock
-* dma tx: linear, rx: circular
-* power: ~1.5ma idle, +2ma led on
-* watchdog enabled
-
-## 🔮 future enhancements
-
-* multiple led / rgb
-* pwm led brightness
-* blink patterns
-* ble remote control
-* low-power uart wakeup
-* command history buffer
-* better error handling
-
-## 🤝 contributing
-
-report bugs, suggest features, send pull requests, improve docs
-
-## 📝 license
-
-mit license
-
-## 👤 author
-
-surbalo1 - github.com/surbalo1
-
-## 🙏 acknowledgments
-
-* based on on semiconductor rsl10 sample code
-* uart driver from rsl10 sdk
-* thanks to on semiconductor community
-
-**version 1.0.0**
-**last updated october 2025**
+</div>
